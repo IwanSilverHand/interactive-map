@@ -1,0 +1,22 @@
+{
+  "name": "webflow-export",
+  "version": "1.0.0",
+  "description": "Testeando Node JS y la API de Airtable",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "JavaScript",
+    "Node",
+    "JS",
+    "Airtable"
+  ],
+  "author": "Ivan de Jesus Lopez Palomo",
+  "license": "ISC",
+  "dependencies": {
+    "airtable": "^0.11.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1"
+  }
+}
