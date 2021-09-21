@@ -90,7 +90,7 @@ html.w-mod-touch * {
   display: -ms-flexbox;
   display: flex;
   width: 100%;
-  max-width: 240px;
+  max-width: 280px;
   padding: 1.5em 1em;
   -webkit-box-align: end;
   -webkit-align-items: flex-end;

@@ -1,0 +1,15 @@
+Funciónes:
+
+• Opciones de display:
+  - Buscar | Explorar
+
+• Buscador por paises (dropdown)
+  - Ubicaciónes dentro del país
+  - Searchbar
+
+• Volver a posición actual.
+
+• Registrar locación
+  - Drag pin
+
+• Imprimr más de una categoría.

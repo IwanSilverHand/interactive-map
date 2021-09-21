@@ -22,6 +22,8 @@ navigator.geolocation.getCurrentPosition(function(position){
   //Esto ajusta el mapa y a la ubicación del dispositivo.
   mymap.setView([latitud, longitud], 13);
   tiles.addTo(mymap);
+  //L.marker([latitud,longitud]).addTo(map);
+  L.marker([latitud, longitud]).addTo(mymap);
   //console.log(latitud,longitud);
 });
 
@@ -41,13 +43,18 @@ async function getAirData(){
   response = await fetch(Airtable_URL);
   data =  await response.json();
   //Loop que genera los botones.
-     for (let i = 0; i < data.records.length; i++) {
+    for (let i = 0; i < data.records.length; i++) {
       let newButton = document.createElement('div');
       newButton.setAttribute('class','w-button');
       newButton.innerText = data.records[i].fields.Location;
       newButton.setAttribute('data-index', i);
       navbar.appendChild(newButton);
-      }
+      // Esto genera los pines.
+      let pinLat = data.records[i].fields.Latitude;
+      let pinLon = data.records[i].fields.Longitude;
+      L.marker([pinLat, pinLon]).addTo(mymap);
+    }
+
 }
 
 // Función que abre el Modal
@@ -79,7 +86,20 @@ function print(){
   latitud = data.records[id].fields.Latitude;
   longitud = data.records[id].fields.Longitude;
   mymap.setView([latitud, longitud], 15);
+  //
+  var layer = L.Polygon(latlngs).bindPopup('Hi There!').addTo(map);
+  layer.openPopup();
+  layer.closePopup();
 }
 
 window.onload = getAirData()
 // Ctlr + K + C para comentar lineas de codigo
+
+mymap.on('click', function(ev) {
+  //alert(ev.latlng); // ev is an event object (MouseEvent in this case)
+  //console.log(ev.latlng);
+  //console.log(ev.latlng.lat
+  var layer = L.Polygon([latitud,longitud]).bindPopup('Hi There!').addTo(map);
+  layer.openPopup();
+  layer.closePopup();
+});
