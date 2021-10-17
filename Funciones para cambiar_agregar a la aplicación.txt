@@ -8,8 +8,42 @@ Funciónes:
   - Searchbar
 
 • Volver a posición actual.
-
 • Registrar locación
   - Drag pin
 
 • Imprimr más de una categoría.
+• Click a la foto para verla más grande
+• Localización en tiempo real?
+• Dificultad del spot.
+• Agregar estado a la ubicación.
+• Agregar filtro de las ciudades disponibles. (generarlo con las ciudades disponibles)
+• Imprimir información de contacto (si esta disponible)
+
+- - - - - - - - 
+
+MVP:
+• Probar primero con google maps si hay interés en una aplicación así.
+• Probar primero con google maps.
+
+- - - - - - - -
+
+• Synchronous vs Asynchronous:
+  https://www.freecodecamp.org/news/synchronous-vs-asynchronous-in-javascript/
+
+• React:
+  https://es.reactjs.org/
+
+• Dynamic Navigation in Next.js:
+  https://www.freecodecamp.org/news/dynamic-navigation-in-nextjs/
+
+• Fetch data with React Hooks:
+  https://javascript.works-hub.com/learn/how-to-fetch-data-from-an-api-using-react-hooks-54d70?utm_source=linkedin&utm_medium=social&utm_campaign=m.popa
+
+• Build a fixed side and bottom navbar
+  https://www.freecodecamp.org/news/fixed-side-and-bottom-navbar-with-css-flexbox/
+
+• Accessibility best practices for mobile app development
+  https://www.freecodecamp.org/news/mobile-accessibility/
+
+• React for beginners:
+  https://www.youtube.com/watch?v=nTeuhbP7wdE

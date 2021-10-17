@@ -85,29 +85,16 @@ html.w-mod-touch * {
   display: none;
 }
 .w-button {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  width: 100%;
-  max-width: 280px;
-  padding: 1.5em 1em;
-  -webkit-box-align: end;
-  -webkit-align-items: flex-end;
-  -ms-flex-align: end;
-  align-items: flex-end;
-  background-color: #ffe3e3;
-  color: #a71010;
-  font-size: 16px;
-  line-height: 120%;
-  font-weight: 700;
+  display: inline-block;
+  padding: 9px 15px;
+  background-color: #3898EC;
+  color: white;
+  border: 0;
+  line-height: inherit;
+  text-decoration: none;
   cursor: pointer;
+  border-radius: 0;
 }
-
-.w-button:hover{
-  background-color: #ffc2c2;
-}
-
 input.w-button {
   -webkit-appearance: button;
 }

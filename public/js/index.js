@@ -1,105 +1,165 @@
-// Definir variables y ligar objetos del DOM a variables"
-const modal = document.querySelector("#modal");
-const navbar = document.querySelector(".navbar");
-let modalValue = false;
-let id;
-let latitud;
-let longitud;
-let response;
-let data;
-let img;
-
+let dataIndex, deviceLat, deviceLong, locationLat, locationLong, locationPicture, data, id;
+let displayModal = false;
+let displayNavegation = false;
+const globeURL = 'https://uploads-ssl.webflow.com/61280f93e64da87e5a771aaa/615e6c55c97872c78624ea07_globe.svg';
+const markerURL = 'https://uploads-ssl.webflow.com/61280f93e64da87e5a771aaa/6157f467f9cd7146e3972705_Location%20Marker.svg';
+const closeIconURL = 'https://uploads-ssl.webflow.com/61280f93e64da87e5a771aaa/615e6c55907e8886161eda13_close.svg';
+const mapIconURL = 'https://uploads-ssl.webflow.com/61280f93e64da87e5a771aaa/615e6c5563074347da2d3b26_map.svg';
+const navbar = document.getElementById("locationsContainer");
+const navegationButtonImage = document.getElementById('locationsIcon');
+const restorePosition = document.getElementById('gpsButton');
+const locationsButton = document.getElementById('locationsButton');
+const goToLocationButton = document.getElementById('lookLocation');
+const locationsContainer = document.getElementById('locationsContainer');
+const navigation = document.getElementById('navegation');
+const closeModalButton = document.getElementById('close');
+const modalContainer = document.getElementById("modalContainer");
+const modalPicture = document.getElementById("modalPicture");
+const modalCountry = document.getElementById("modalCountry");
+const modalState = document.getElementById('modalState');
+const modalTitle = document.getElementById("modalLocation");
+const modalAddress = document.getElementById("modalAddress");
+const modalCategory = document.getElementById('modalCategory');
+const modalClose = document.getElementById("close");
+// Esta función cierra el modal
+modalClose.addEventListener('click', () => {
+    modalContainer.style.display = "none";
+    displayModal = false;
+})
+// Aquí muestro la navegación
+locationsButton.addEventListener('click', () => {
+    switch(displayNavegation)
+    {
+        case false:
+            navigation.style.display = 'flex';
+            displayNavegation = true;
+            navegationButtonImage.src = closeIconURL;
+            break;
+        case true:
+            navigation.style.display = 'none';
+            displayNavegation = false;
+            navegationButtonImage.src = mapIconURL;
+            break;
+    }
+})
+// Aquí inicializo el mapa
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const tiles = L.tileLayer(tileUrl, { attribution });
-let mymap = L.map('mapid');
-
-//Aquí inicializo el mapa consigo la ubicación.
-navigator.geolocation.getCurrentPosition(function(position){
-  latitud = position.coords.latitude;
-  longitud = position.coords.longitude;
-
-  //Esto ajusta el mapa y a la ubicación del dispositivo.
-  mymap.setView([latitud, longitud], 13);
-  tiles.addTo(mymap);
-  //L.marker([latitud,longitud]).addTo(map);
-  L.marker([latitud, longitud]).addTo(mymap);
-  //console.log(latitud,longitud);
+let mymap = L.map('map');
+// Aquí Restauro la posición del usuario
+restorePosition.addEventListener('click', () => {
+    mymap.setView([deviceLat,deviceLong], 15);
 });
-
-//Esta función revisa que boton hizo click
-navbar.addEventListener("click", e => {
-  const target = e.target.closest(".w-button"); // see if the click landed inside a button
-  if (!target) return; // bail if it wasn't inside a button
-  // do stuff with target here (target is now the button that was clicked on)
-  id = target.dataset.index;
-  openModal()
-})
-
+// Inicializar ubicación del dipositivo.
+navigator.geolocation.getCurrentPosition(function(position){
+    deviceLat = position.coords.latitude;
+    deviceLong = position.coords.longitude;
+    mymap.setView([deviceLat,deviceLong], 15);
+    tiles.addTo(mymap);
+    L.marker([deviceLat, deviceLong]).addTo(mymap);
+});
 // Funcion que trae los datos de Airtable.
 async function getAirData(){
-  const API_KEY = 'key0xswwEgtvrbQ2J';
-  const Airtable_URL = `https://api.airtable.com/v0/appwBNFT7XIhOATPt/Locations?api_key=${API_KEY}`;
-  response = await fetch(Airtable_URL);
-  data =  await response.json();
-  //Loop que genera los botones.
-    for (let i = 0; i < data.records.length; i++) {
-      let newButton = document.createElement('div');
-      newButton.setAttribute('class','w-button');
-      newButton.innerText = data.records[i].fields.Location;
-      newButton.setAttribute('data-index', i);
-      navbar.appendChild(newButton);
-      // Esto genera los pines.
-      let pinLat = data.records[i].fields.Latitude;
-      let pinLon = data.records[i].fields.Longitude;
-      L.marker([pinLat, pinLon]).addTo(mymap);
-    }
-
+    const API_KEY = 'key0xswwEgtvrbQ2J';
+    const Airtable_URL = `https://api.airtable.com/v0/appwBNFT7XIhOATPt/Locations?api_key=${API_KEY}`;
+    response = await fetch(Airtable_URL);
+    data =  await response.json();
+    //Funcion que genera los botones.
+    imprimirDatos()
 }
-
-// Función que abre el Modal
-function openModal()
-{
-    switch(modalValue)
+//Esta función revisa que boton hizo click 
+locationsContainer.addEventListener("click", e => {
+    const target = e.target.closest(".interation_button"); // see if the click landed inside a button
+    if (!target) return; // bail if it wasn't inside a button
+    // do stuff with target here (target is now the button that was clicked on)
+    //id = target.dataset.index;
+    //openModal()
+    id = target.dataset.index;
+    navigation.style.display = 'none';
+    displayNavegation = false;
+    openModal()
+})
+function imprimirDatos(){
+    for (let i = 0; i < data.records.length; i++) {
+        // Aquí genero el objeto.
+        let ObjectContainer = document.createElement('div');
+        ObjectContainer.setAttribute('class','location_item');
+        // Aquí creo el contenedor de la info.
+        let ObjectInfo = document.createElement('div');
+        ObjectInfo.setAttribute('class','info_container');
+        // Aquí creo el contenedor del boton.
+        let ObjectButton = document.createElement('div');
+        ObjectButton.setAttribute('class','interation_button location');
+        ObjectButton.setAttribute('data-index', i);
+        let ObjectButtonIcon = document.createElement('img');
+        ObjectButtonIcon.src = 'https://uploads-ssl.webflow.com/61280f93e64da87e5a771aaa/615e6c55c1713638ee2bfd1e_globe%20search.svg';
+        ObjectButton.appendChild(ObjectButtonIcon);
+        // Agui genero el dive que tiene el país y estado.
+        let ObjectLocation = document.createElement('div');
+        ObjectLocation.setAttribute('class','location_info_container');
+        let ObjectLocationInfo = document.createElement('p');
+        ObjectLocationInfo.setAttribute('class','location_info');
+        let information = {
+            country: data.records[i].fields.Country,
+            state: data.records[i].fields.State
+        };
+        ObjectLocationInfo.innerText = `${information.country} | ${information.state}`;
+        // Aquí se crea la imagen.
+        let ObjectGlobeIcon = document.createElement('img');
+        ObjectGlobeIcon.setAttribute('class','location_globe_icon');
+        ObjectGlobeIcon.setAttribute('loading','lazy');
+        ObjectGlobeIcon.setAttribute('src', globeURL);
+        // Aquí genero el titulo de la locación
+        let ObjectTitle = document.createElement('p');
+        ObjectTitle.setAttribute('class','location_title');
+        ObjectTitle.innerText = data.records[i].fields.Location;
+        // Categoría
+        let ObjectCategory = document.createElement('div');
+        ObjectCategory.setAttribute('class','location_category');
+        ObjectCategory.innerText = data.records[i].fields.Category;
+        // Aquí agrego todo al dom
+        ObjectLocation.appendChild(ObjectGlobeIcon);
+        ObjectLocation.appendChild(ObjectLocationInfo);
+        // Primero la info de "Locación", luego lo demás
+        ObjectInfo.appendChild(ObjectLocation);
+        ObjectInfo.appendChild(ObjectTitle);
+        ObjectInfo.appendChild(ObjectCategory);
+        ObjectContainer.appendChild(ObjectInfo);
+        ObjectContainer.appendChild(ObjectButton);
+        navbar.appendChild(ObjectContainer);
+        //Esto genera los marcadores
+        let pinLat = data.records[i].fields.Latitude;
+        let pinLon = data.records[i].fields.Longitude;
+        L.marker([pinLat, pinLon]).addTo(mymap);
+      }
+}
+function openModal(){
+    switch(displayModal)
     {
         case false:
+            modalContainer.style.display = "block";
             print()
-            modal.style.display = "flex";
-            modalValue = true;
+            displayModal = true;
+            navegationButtonImage.src = mapIconURL;
             break;
-
         case true:
-            modal.style.display = "none";
-            modalValue = false;
+            modalContainer.style.display = "none";
+            displayModal = false;
             break;
     }
 }
-
-// Esta funcion imprime los datos del modal
-function print(){
-  // Aqui se imprimen los datos de airtable.
-  document.getElementById("location_title").textContent = data.records[id].fields.Location;
-  document.getElementById('location_category').textContent = data.records[id].fields.Category;
-  document.getElementById('location_description').textContent = data.records[id].fields.Address;
-  img = data.records[id].fields.Picture[0].url;
-  document.getElementById('location_image').style.backgroundImage = `url("${img}")`;
-  latitud = data.records[id].fields.Latitude;
-  longitud = data.records[id].fields.Longitude;
-  mymap.setView([latitud, longitud], 15);
-  //
-  var layer = L.Polygon(latlngs).bindPopup('Hi There!').addTo(map);
-  layer.openPopup();
-  layer.closePopup();
+function print (){
+    latitud = data.records[id].fields.Latitude;
+    longitud = data.records[id].fields.Longitude;
+    mymap.setView([latitud, longitud], 15);
+    img = data.records[id].fields.Picture[0].thumbnails.small.url;
+    modalTitle.textContent = data.records[id].fields.Location;
+    modalCountry.textContent = data.records[id].fields.Country;
+    modalState.textContent = data.records[id].fields.State;
+    modalAddress.textContent = data.records[id].fields.Address;
+    modalCategory.textContent = data.records[id].fields.Category;
+    modalPicture.src = img;
 }
-
 window.onload = getAirData()
-// Ctlr + K + C para comentar lineas de codigo
-
-mymap.on('click', function(ev) {
-  //alert(ev.latlng); // ev is an event object (MouseEvent in this case)
-  //console.log(ev.latlng);
-  //console.log(ev.latlng.lat
-  var layer = L.Polygon([latitud,longitud]).bindPopup('Hi There!').addTo(map);
-  layer.openPopup();
-  layer.closePopup();
-});
+console.log(browser);
