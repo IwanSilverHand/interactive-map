@@ -1,3 +1,5 @@
+https://stackoverflow.com/questions/2432764/how-to-change-the-uri-url-for-a-remote-git-repository
+
 Funciónes:
 
 • Opciones de display:
@@ -18,6 +20,7 @@ Funciónes:
 • Agregar estado a la ubicación.
 • Agregar filtro de las ciudades disponibles. (generarlo con las ciudades disponibles)
 • Imprimir información de contacto (si esta disponible)
+• Hacer el mapa mas chico cuando se abra el modal.
 
 - - - - - - - - 
 

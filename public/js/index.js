@@ -21,11 +21,13 @@ const modalTitle = document.getElementById("modalLocation");
 const modalAddress = document.getElementById("modalAddress");
 const modalCategory = document.getElementById('modalCategory');
 const modalClose = document.getElementById("close");
+
 // Esta función cierra el modal
 modalClose.addEventListener('click', () => {
     modalContainer.style.display = "none";
     displayModal = false;
 })
+
 // Aquí muestro la navegación
 locationsButton.addEventListener('click', () => {
     switch(displayNavegation)
@@ -42,15 +44,18 @@ locationsButton.addEventListener('click', () => {
             break;
     }
 })
+
 // Aquí inicializo el mapa
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const tiles = L.tileLayer(tileUrl, { attribution });
 let mymap = L.map('map');
+
 // Aquí Restauro la posición del usuario
 restorePosition.addEventListener('click', () => {
     mymap.setView([deviceLat,deviceLong], 15);
 });
+
 // Inicializar ubicación del dipositivo.
 navigator.geolocation.getCurrentPosition(function(position){
     deviceLat = position.coords.latitude;
@@ -59,6 +64,7 @@ navigator.geolocation.getCurrentPosition(function(position){
     tiles.addTo(mymap);
     L.marker([deviceLat, deviceLong]).addTo(mymap);
 });
+
 // Funcion que trae los datos de Airtable.
 async function getAirData(){
     const API_KEY = 'key0xswwEgtvrbQ2J';
@@ -68,6 +74,7 @@ async function getAirData(){
     //Funcion que genera los botones.
     imprimirDatos()
 }
+
 //Esta función revisa que boton hizo click 
 locationsContainer.addEventListener("click", e => {
     const target = e.target.closest(".interation_button"); // see if the click landed inside a button
@@ -80,6 +87,7 @@ locationsContainer.addEventListener("click", e => {
     displayNavegation = false;
     openModal()
 })
+
 function imprimirDatos(){
     for (let i = 0; i < data.records.length; i++) {
         // Aquí genero el objeto.
@@ -131,9 +139,34 @@ function imprimirDatos(){
         //Esto genera los marcadores
         let pinLat = data.records[i].fields.Latitude;
         let pinLon = data.records[i].fields.Longitude;
-        L.marker([pinLat, pinLon]).addTo(mymap);
+        //L.marker([pinLat, pinLon]).addTo(mymap).bindPopup(`<b>${data.records[i].fields.Location}</b>`).openPopup();
+        L.marker([pinLat, pinLon]).addTo(mymap).bindPopup(`<button data-index ="${i}" class="marker">${data.records[i].fields.Location}</button>`).openPopup();
       }
+      
+      /*
+      Test Script para probar el boton del Pop Up
+      
+      const marker = L.marker([latitude, longitude]).addTo(map);
+      
+      const button = '<br/><button type="button" id="delete">Delete marker</button>'
+      const deletebutton = document.querySelector("#delete");
+      button1.addEventListener("click", function(event) {
+          console.log('This button works!');
+        */
 }
+
+// Codigo que identifica que marcador hizo click
+const markerWrapper = document.querySelector('.navegation_wrapper');
+markerWrapper.addEventListener('click', m => {
+  const markerClicked = m.target.closest('.marker');
+  if (!markerClicked) return;
+  id = markerClicked.dataset.index;
+  navigation.style.display = 'none';
+  displayNavegation = false;
+  openModal()
+
+})
+
 function openModal(){
     switch(displayModal)
     {
@@ -149,11 +182,12 @@ function openModal(){
             break;
     }
 }
+
 function print (){
     latitud = data.records[id].fields.Latitude;
     longitud = data.records[id].fields.Longitude;
     mymap.setView([latitud, longitud], 15);
-    img = data.records[id].fields.Picture[0].thumbnails.small.url;
+    img = data.records[id].fields.Picture[0].url;
     modalTitle.textContent = data.records[id].fields.Location;
     modalCountry.textContent = data.records[id].fields.Country;
     modalState.textContent = data.records[id].fields.State;
@@ -161,5 +195,17 @@ function print (){
     modalCategory.textContent = data.records[id].fields.Category;
     modalPicture.src = img;
 }
+
 window.onload = getAirData()
-console.log(browser);
+
+/*Making a button work?
+    https://stackoverflow.com/questions/69724113/how-to-add-a-button-to-run-code-inside-leafletjs-marker
+*/
+
+const contenedor = document.querySelector('.test_wrapper');
+let boton_test = document.querySelector('botonazo');
+/*
+contenedor.addEventListener('click', b => {
+    const target = b.target.closest ('botonazo');
+    console.log = target.dataset.index;
+});*/
